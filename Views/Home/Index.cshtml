@@ -11,7 +11,8 @@
             editor: {
                 name: ko.observable(""),
                 localtion: ko.observable("")
-            }
+            },
+            displaySummary: ko.observable(true)
         };
 
         function sendAjaxRequest(httpMethod, callback, url, requestData) {
@@ -27,6 +28,7 @@
         function handleEditorClick() {
             sendAjaxRequest("POST", function (newItem) {
                 model.reservations.push(newItem);
+                model.displaySummary(true);
             }, null, {
                 ClientName: model.editor.name,
                 Location: model.editor.location
@@ -56,6 +58,10 @@
             )
         }
 
+        function handleCreateClick() {
+            model.displaySummary(false);
+        }
+
         $(document).ready(function () {
             getAllItems();
             ko.applyBindings(model);
@@ -64,7 +70,7 @@
     </script>
 }
 @section Body {
-    <div id="summary" class="section panel panel-primary">
+    <div id="summary" class="section panel panel-primary" data-bind="if: model.displaySummary">
         <div class="panel-heading">Reservation Summary</div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -90,9 +96,10 @@
                     </tr>
                 </tbody>
             </table>
+            <button class="btn btn-primary" data-bind="click: handleCreateClick">Create</button>
         </div>
     </div>
-    <div id="editor" class="section panel panel-primary">
+    <div id="editor" class="section panel panel-primary" data-bind="ifnot: model.displaySummary">
         <div class="panel-heading">
             Create Reservation
         </div>
